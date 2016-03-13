@@ -1,0 +1,10 @@
+/bin/
+/lib/
+/project/
+/submission/
+/target/
+/build.sbt/
+/.classpath/
+/.project/
+/.cache-main/
+
