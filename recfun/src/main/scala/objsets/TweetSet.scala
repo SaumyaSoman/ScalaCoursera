@@ -76,7 +76,7 @@ abstract class TweetSet {
    * Question: Should we implment this method here, or should it remain abstract
    * and be implemented in the subclasses?
    */
-  def descendingByRetweet: TweetList = ???
+  def descendingByRetweet: TweetList
 
   /**
    * The following methods are already implemented
@@ -104,6 +104,8 @@ abstract class TweetSet {
    * This method takes a function and applies it to every element in the set.
    */
   def foreach(f: Tweet => Unit): Unit
+
+  def isEmpty(): Boolean
 }
 
 class Empty extends TweetSet {
@@ -112,6 +114,8 @@ class Empty extends TweetSet {
   def union(that: TweetSet): TweetSet = that
 
   def mostRetweeted: Tweet = throw new java.util.NoSuchElementException()
+
+  def descendingByRetweet: TweetList = Nil
 
   /**
    * The following methods are already implemented
@@ -124,6 +128,8 @@ class Empty extends TweetSet {
   def remove(tweet: Tweet): TweetSet = this
 
   def foreach(f: Tweet => Unit): Unit = ()
+
+  def isEmpty(): Boolean = true;
 }
 
 class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
@@ -134,8 +140,22 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
   }
 
   def union(other: TweetSet): TweetSet = right.union(left.union(other.incl(elem)))
-  
-  def mostRetweeted: Tweet = throw new java.util.NoSuchElementException()
+ 
+  def mostRetweeted: Tweet = {
+    val lr = right.union(left)
+    val popular = lr.filter(tw => tw.retweets > elem.retweets)
+    if (popular.isEmpty()) elem else popular.mostRetweeted
+  }
+
+  def isEmpty(): Boolean = false;
+
+  def descendingByRetweet: TweetList = {
+    while(!isEmpty){
+      val popular = mostRetweeted
+      new Cons(popular, remove(popular).descendingByRetweet)
+    }
+    return new Cons(elem, Nil)
+  }
   /**
    * The following methods are already implemented
    */
