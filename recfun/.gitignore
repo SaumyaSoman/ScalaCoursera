@@ -1,1 +1,13 @@
 /bin/
+/lib/
+/lib_managed/
+/project/
+/target/
+/.settings/
+.classpath
+build.sbt
+cache-main
+cache-tests
+.project
+
+
